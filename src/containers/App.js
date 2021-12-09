@@ -1,45 +1,55 @@
-import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import React, { useCallback, useEffect, useState } from 'react'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import CardList from '../components/CardList'
 import SearchBox from '../components/SearchBox'
 import Scroll from '../components/Scroll'
 import ErrorBoundary from '../components/ErrorBoundary'
 import './App.css'
 
-import { setSearchTermAction } from '../actions'
+import { requestRobotsAction, setSearchTermAction } from '../actions'
 
-const mapStateToProps = (state) => {
-  return {
-    searchTerm: state.searchTerm,
+// const mapStateToProps = (state) => {
+//   return {
+//     searchTerm: state.searchTermReducer.searchTerm,
+//     robots: state.requestRobotsReducer.robots,
+//     isPending: state.requestRobotsReducer.isPending,
+//     error: state.requestRobotsReducer.error,
+//   }
+// }
+
+// const mapDisptachToProps = (dispatch) => {
+//   return {
+//     onSearchTermChange: (event) =>
+//       dispatch(setSearchTermAction(event.target.value)),
+//
+//   }
+// }
+
+export const App = () => {
+  const { searchTerm } = useSelector((state) => state.searchTermReducer)
+  const requestRobotsReducer = useSelector(
+    (state) => state.requestRobotsReducer,
+  )
+  const dispatch = useDispatch()
+
+  const onRequestRobots = useCallback(() => dispatch(requestRobotsAction(), []))
+
+  const onSearchTermChange = (event) => {
+    dispatch(setSearchTermAction(event.target.value))
   }
-}
-
-const mapDisptachToProps = (dispatch) => {
-  return {
-    onSearchTermChange: (event) =>
-      dispatch(setSearchTermAction(event.target.value)),
-  }
-}
-
-export const App = ({ searchTerm, onSearchTermChange }) => {
-  const [robots, setRobots] = useState([])
-  // const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then((response) => response.json())
-      .then((users) => setRobots(users))
+    console.log('App.js useEffect, disptaching action')
+    onRequestRobots()
   }, [])
 
-  // const onSearchChange = (event) => {
-  //   setSearchTerm(event.target.value)
-  // }
-
-  const filteredRobots = robots.filter((robot) => {
+  const filteredRobots = requestRobotsReducer.robots.filter((robot) => {
     return robot.name.toLowerCase().includes(searchTerm.toLowerCase())
   })
 
-  return (
+  return requestRobotsReducer.isPending ? (
+    <h1>Loading</h1>
+  ) : (
     <div className="tc">
       <h1 className="f1">RoboFriends</h1>
       <SearchBox searchChange={onSearchTermChange} />
@@ -52,4 +62,5 @@ export const App = ({ searchTerm, onSearchTermChange }) => {
   )
 }
 
-export default connect(mapStateToProps, mapDisptachToProps)(App)
+// export default connect(mapStateToProps, mapDisptachToProps)(App)
+export default App

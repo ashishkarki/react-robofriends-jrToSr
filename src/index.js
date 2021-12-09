@@ -1,14 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import { createLogger } from 'redux-logger'
+import thunk from 'redux-thunk'
 import './index.css'
 import App from './containers/App'
 import registerServiceWorker from './registerServiceWorker'
 import 'tachyons'
-import { searchRobotsReducer } from './reducers'
+import { searchTermReducer, requestRobotsReducer } from './reducers'
 
-const store = createStore(searchRobotsReducer)
+const logger = createLogger()
+
+const rootReducer = combineReducers({
+  searchTermReducer,
+  requestRobotsReducer,
+})
+const store = createStore(rootReducer, applyMiddleware(thunk, logger))
 
 ReactDOM.render(
   <Provider store={store}>
