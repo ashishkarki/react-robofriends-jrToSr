@@ -25,3 +25,10 @@ ReactDOM.render(
   document.getElementById('root'),
 )
 // registerServiceWorker();
+
+// why did you update plugin setup
+// is this package outdated? the following is not working
+if (process.env.NODE_ENV !== 'production') {
+  const { whyDidYouUpdate } = require('why-did-you-update')
+  whyDidYouUpdate(React)
+}
