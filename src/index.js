@@ -24,7 +24,7 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root'),
 )
-// registerServiceWorker();
+registerServiceWorker()
 
 // why did you update plugin setup
 // is this package outdated? the following is not working
